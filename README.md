@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain and Mind Academy - Functions, Domain, and Range Master Quiz</title>
+    <!-- Desmos API Script -->
+    <script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey=d2822b107a6c49f6a00a221957776319"></script>
+    <style>
+        :root {
+            --primary-header: #1e3a8a;
+            --header-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            --accent-gold: #d97706;
+            --accent-gold-light: #fcd34d;
+            --correct-green: #059669;
+            --correct-bg: #d1fae5;
+            --incorrect-red: #dc2626;
+            --incorrect-bg: #fee2e2;
+            --skipped-orange: #f59e0b;
+            --skipped-bg: #fef3c7;
+            --bg-body: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: var(--header-gradient);
+            color: white;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        .brand-subtitle {
+            font-size: 0.9rem;
+            color: var(--accent-gold-light);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-email {
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary { background-color: var(--primary-header); color: white; }
+        .btn-primary:hover { background-color: #172554; }
+        .btn-gold { background-color: var(--accent-gold); color: white; }
+        .btn-gold:hover { background-color: #b45309; }
+        .btn-outline { background: transparent; border: 1.5px solid var(--border-color); color: var(--text-dark); }
+        .btn-outline:hover { background-color: #f1f5f9; }
+        .btn-danger { background-color: var(--incorrect-red); color: white; }
+        .btn-danger:hover { background-color: #b91c1c; }
+        .btn-success { background-color: var(--correct-green); color: white; }
+        .btn-success:hover { background-color: #047857; }
+
+        /* Screens */
+        .screen {
+            display: none;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        .screen.active { display: block; }
+
+        /* Auth Screen */
+        #auth-screen {
+            max-width: 450px;
+            margin: auto;
+            padding-top: 4rem;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .auth-card h2 { margin-bottom: 0.5rem; color: var(--primary-header); }
+        .auth-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; text-align: left; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 600; }
+        .form-group input {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color);
+            border-radius: 6px; font-size: 1rem; outline: none;
+        }
+        .form-group input:focus { border-color: var(--primary-header); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); }
+
+        /* Video Gate Screen */
+        #video-screen { max-width: 850px; margin: auto; }
+        .video-card {
+            background: var(--card-bg); padding: 2rem; border-radius: 12px;
+            border: 1px solid var(--border-color); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); text-align: center;
+        }
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+            border-radius: 8px; margin: 1.5rem 0; background: #000;
+        }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        /* Quiz Layout */
+        .quiz-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .quiz-main {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--bg-body);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .q-badge {
+            background: #eff6ff;
+            color: var(--primary-header);
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .q-text { font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.5rem; font-weight: 600; }
+
+        .q-diagram {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .options-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
+
+        .option-item {
+            display: flex; align-items: center; padding: 1rem; border: 1.5px solid var(--border-color);
+            border-radius: 8px; cursor: pointer; transition: all 0.2s ease; background: white;
+        }
+
+        .option-item:hover:not(.disabled) { border-color: var(--primary-header); background-color: #f8fafc; }
+        .option-item.selected { border-color: var(--primary-header); background-color: #eff6ff; }
+        .option-item.correct { border-color: var(--correct-green); background-color: var(--correct-bg); color: #065f46; }
+        .option-item.incorrect { border-color: var(--incorrect-red); background-color: var(--incorrect-bg); color: #991b1b; }
+        .option-item.disabled { cursor: default; }
+
+        .opt-prefix {
+            width: 28px; height: 28px; border-radius: 50%; background: #e2e8f0;
+            display: flex; align-items: center; justify-content: center; font-weight: 700;
+            font-size: 0.85rem; margin-right: 1rem; flex-shrink: 0;
+        }
+
+        .option-item.selected .opt-prefix { background: var(--primary-header); color: white; }
+        .option-item.correct .opt-prefix { background: var(--correct-green); color: white; }
+        .option-item.incorrect .opt-prefix { background: var(--incorrect-red); color: white; }
+
+        .action-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 1.5rem; border-top: 1px solid var(--border-color);
+        }
+
+        .rationale-box {
+            margin-top: 1.5rem; padding: 1.25rem; border-radius: 8px;
+            background: #f1f5f9; border-left: 4px solid var(--primary-header);
+        }
+
+        .rationale-title { font-weight: 700; color: var(--primary-header); margin-bottom: 0.5rem; }
+
+        /* Sidebar, Grid Palette & Desmos */
+        .quiz-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .sidebar-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-header);
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+        .dot-active { border: 2px solid var(--primary-header); background: transparent; }
+        .dot-attempted { background: var(--correct-green); }
+        .dot-skipped { background: var(--skipped-orange); }
+        .dot-unvisited { background: #cbd5e1; }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .grid-btn {
+            aspect-ratio: 1; border: 1px solid var(--border-color); background: #f8fafc;
+            color: var(--text-dark); border-radius: 6px; font-weight: 600; font-size: 0.85rem;
+            cursor: pointer; transition: all 0.15s ease;
+        }
+
+        .grid-btn.active { border: 2px solid var(--primary-header); color: var(--primary-header); font-weight: 800; background: #eff6ff; }
+        .grid-btn.attempted { background: var(--correct-green); color: white; border-color: var(--correct-green); }
+        .grid-btn.skipped { background: var(--skipped-orange); color: white; border-color: var(--skipped-orange); }
+
+        #desmos-calculator {
+            width: 100%;
+            height: 320px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Math Typography Formatting */
+        .math-frac {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+            padding: 0 0.2em;
+        }
+
+        .math-num { border-bottom: 1px solid var(--text-dark); padding-bottom: 1px; }
+        .math-den { padding-top: 1px; }
+
+        /* Review Screen */
+        .results-summary {
+            background: var(--card-bg); border-radius: 12px; padding: 2rem;
+            border: 1px solid var(--border-color); margin-bottom: 2rem; text-align: center;
+        }
+
+        .score-circle {
+            width: 130px; height: 130px; border-radius: 50%; background: var(--header-gradient);
+            color: white; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; margin: 1rem auto;
+        }
+
+        .score-num { font-size: 2.2rem; font-weight: 800; color: var(--accent-gold-light); }
+        .review-list { display: flex; flex-direction: column; gap: 1.5rem; }
+        .review-card { background: var(--card-bg); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border-color); }
+
+        .status-tag {
+            padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.75rem;
+            font-weight: 700; text-transform: uppercase;
+        }
+
+        .tag-correct { background: var(--correct-bg); color: #065f46; }
+        .tag-incorrect { background: var(--incorrect-bg); color: #991b1b; }
+        .tag-skipped { background: var(--skipped-bg); color: #92400e; }
+
+        @media (max-width: 992px) {
+            .quiz-container { grid-template-columns: 1fr; }
+            .quiz-sidebar { position: static; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <div class="brand-title">BRAIN AND MIND ACADEMY</div>
+            <div class="brand-subtitle">1.1 Functions, Domain, and Range - Comprehensive Master Assessment (Questions 1–40)</div>
+        </div>
+        <div class="user-info" id="user-header-info" style="display: none;">
+            <span class="user-email" id="display-user-email"></span>
+            <button class="btn btn-outline" style="color:white; border-color:rgba(255,255,255,0.3);" onclick="logout()">Switch User</button>
+        </div>
+    </header>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen active">
+        <div class="auth-card">
+            <h2>Student Portal</h2>
+            <p>Enter your email address to begin or continue your practice session.</p>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email-input">Email ID</label>
+                    <input type="email" id="email-input" required placeholder="student@school.com">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Continue</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Gate Screen -->
+    <div id="video-screen" class="screen">
+        <div class="video-card">
+            <h2 style="color: var(--primary-header);">Concept Lesson: 1.1 Functions, Domain, and Range</h2>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Watch the concept tutorial video below before starting your 40-question assessment.</p>
+            
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/qgRsd_7CWOc" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <p style="font-weight: 600; margin-bottom: 1rem; color: var(--text-dark);">Have you watched the concept lesson video?</p>
+                <button class="btn btn-success" style="font-size: 1rem; padding: 0.75rem 2rem;" onclick="approveVideoAndStart()">Yes, I have watched the video & I'm ready! &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="screen">
+        <div class="quiz-container">
+            <div class="quiz-main">
+                <div class="quiz-header">
+                    <span class="q-badge" id="q-number-badge">Question 1</span>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">MCR3U Practice Series</span>
+                </div>
+
+                <div class="q-text" id="q-text-body"></div>
+                <div class="q-diagram" id="q-diagram-container" style="display: none;"></div>
+                <div class="options-list" id="q-options-container"></div>
+
+                <div class="action-bar">
+                    <button class="btn btn-gold" id="skip-btn" onclick="skipQuestion()">Skip Question</button>
+                    <button class="btn btn-primary" id="submit-btn" onclick="submitAnswer()">Submit Answer</button>
+                    <button class="btn btn-outline" id="next-btn" style="display: none;" onclick="nextQuestion()">Next Question &rarr;</button>
+                </div>
+
+                <div class="rationale-box" id="rationale-container" style="display: none;">
+                    <div class="rationale-title">Step-by-Step Mathematical Rationale</div>
+                    <div id="rationale-text" style="font-size: 0.95rem; line-height: 1.6;"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="quiz-sidebar">
+                <div class="sidebar-card">
+                    <div class="sidebar-title">Question Palette (1–40)</div>
+                    <div class="legend-grid">
+                        <div class="legend-item"><div class="legend-dot dot-active"></div> Active</div>
+                        <div class="legend-item"><div class="legend-dot dot-attempted"></div> Submitted</div>
+                        <div class="legend-item"><div class="legend-dot dot-skipped"></div> Skipped</div>
+                        <div class="legend-item"><div class="legend-dot dot-unvisited"></div> Unvisited</div>
+                    </div>
+                    <div class="question-grid" id="question-grid"></div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-danger" style="width: 100%;" onclick="finishTest()">Finish & Submit</button>
+                    </div>
+                </div>
+
+                <!-- Desmos Interactive Graph Plotter Panel -->
+                <div class="sidebar-card">
+                    <div class="sidebar-title" style="margin-bottom:0.5rem;">Desmos Graph Plotter</div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Use this interactive Desmos plotter to test functions or graph asymptotes.</p>
+                    <div id="desmos-calculator"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Screen -->
+    <div id="review-screen" class="screen">
+        <div class="results-summary">
+            <h2>Performance Summary</h2>
+            <div class="score-circle">
+                <span class="score-num" id="final-score">0 / 40</span>
+                <span style="font-size: 0.8rem; opacity: 0.8;">Score</span>
+            </div>
+            <button class="btn btn-primary" onclick="restartQuiz()">Retake Quiz</button>
+        </div>
+
+        <h3 style="margin-bottom: 1rem; color: var(--primary-header);">Response & Answer Sheet Review</h3>
+        <div class="review-list" id="review-list"></div>
+    </div>
+
+    <script>
+        // Web Audio Synthesizer Engine
+        const AudioFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            playCorrectBell() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const playSingleBell = (freq, time, duration) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, time);
+
+                    gain.gain.setValueAtTime(0, time);
+                    gain.gain.linearRampToValueAtTime(0.3, time + 0.01);
+                    gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(time);
+                    osc.stop(time + duration);
+                };
+
+                playSingleBell(880, now, 0.8);        
+                playSingleBell(1318.51, now + 0.12, 1.2); 
+            },
+            playIncorrectBell() {
+                this.init();
+                const now = this.ctx.currentTime;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, now); 
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.35, now + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.6);
+            },
+            playSkipChime() {
+                this.init();
+                const now = this.ctx.currentTime;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); 
+                osc.frequency.exponentialRampToValueAtTime(392, now + 0.15); 
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+        };
+
+        const CHAPTER_KEY = "CHAPTER_MCR3U_1_1_RANDOMIZED_40Q";
+
+        // SVG Visual Renderings for Graphs
+        const svgVabs = `<svg width="200" height="140" viewBox="-5 -1 10 7"><line x1="-5" y1="0" x2="5" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-1" x2="0" y2="6" stroke="#333" stroke-width="0.1"/><path d="M -5 5 L 0 0 L 5 5" fill="none" stroke="#1e3a8a" stroke-width="0.3"/><text x="1" y="5" font-size="0.8" fill="#1e3a8a">y = |x|</text></svg>`;
+        const svgLine = `<svg width="200" height="140" viewBox="-5 -8 10 10"><line x1="-5" y1="0" x2="5" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-8" x2="0" y2="2" stroke="#333" stroke-width="0.1"/><line x1="-3" y1="2" x2="-0.33" y2="-7" stroke="#1e3a8a" stroke-width="0.3"/><text x="-4" y="-3" font-size="0.8" fill="#1e3a8a">y = -3x - 7</text></svg>`;
+        const svgParabolaUp = `<svg width="200" height="140" viewBox="-4 -3 8 8"><line x1="-4" y1="0" x2="4" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-3" x2="0" y2="5" stroke="#333" stroke-width="0.1"/><path d="M -3 4 Q 1 -3 3 4" fill="none" stroke="#1e3a8a" stroke-width="0.3"/></svg>`;
+        const svgParabolaRight = `<svg width="200" height="140" viewBox="-3 -4 8 8"><line x1="-3" y1="0" x2="5" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-4" x2="0" y2="4" stroke="#333" stroke-width="0.1"/><path d="M 4 -3 Q -2 1 4 3" fill="none" stroke="#dc2626" stroke-width="0.3"/></svg>`;
+        const svgCircle = `<svg width="160" height="160" viewBox="-4 -4 8 8"><line x1="-4" y1="0" x2="4" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-4" x2="0" y2="4" stroke="#333" stroke-width="0.1"/><circle cx="0" cy="0" r="2" fill="none" stroke="#dc2626" stroke-width="0.3"/><text x="0.2" y="-2.2" font-size="0.7" fill="#dc2626">x² + y² = 4</text></svg>`;
+        const svgHyperbola = `<svg width="200" height="140" viewBox="-2 -5 10 10"><line x1="-2" y1="0" x2="8" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-5" x2="0" y2="5" stroke="#333" stroke-width="0.1"/><line x1="3" y1="-5" x2="3" y2="5" stroke="#aaa" stroke-dasharray="0.2" stroke-width="0.1"/><path d="M 3.4 5 Q 3.8 1 8 0.3" fill="none" stroke="#1e3a8a" stroke-width="0.3"/><path d="M 2.6 -5 Q 2.2 -1 -2 -0.3" fill="none" stroke="#1e3a8a" stroke-width="0.3"/><text x="4" y="-2" font-size="0.8" fill="#1e3a8a">y = 2/(x-3)</text></svg>`;
+        const svgSine = `<svg width="200" height="140" viewBox="-4 -3 8 6"><line x1="-4" y1="0" x2="4" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-3" x2="0" y2="3" stroke="#333" stroke-width="0.1"/><path d="M -4 0 C -3 3, -1 -3, 0 0 C 1 3, 3 -3, 4 0" fill="none" stroke="#1e3a8a" stroke-width="0.3"/></svg>`;
+        const svgEllipse = `<svg width="160" height="160" viewBox="-4 -4 8 8"><line x1="-4" y1="0" x2="4" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-4" x2="0" y2="4" stroke="#333" stroke-width="0.1"/><ellipse cx="0" cy="0" rx="2" ry="3" fill="none" stroke="#dc2626" stroke-width="0.3"/></svg>`;
+        const svgLineNeg = `<svg width="200" height="140" viewBox="-2 -8 8 16"><line x1="-2" y1="0" x2="6" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-8" x2="0" y2="8" stroke="#333" stroke-width="0.1"/><line x1="-1" y1="9" x2="2.5" y2="-7" stroke="#1e3a8a" stroke-width="0.3"/><text x="1" y="4" font-size="0.8" fill="#1e3a8a">y = -4x + 5</text></svg>`;
+        const svgParabolaHoriz = `<svg width="200" height="140" viewBox="-1 -2 8 8"><line x1="-1" y1="0" x2="7" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-2" x2="0" y2="6" stroke="#333" stroke-width="0.1"/><path d="M 6 -1 Q 2 2 6 5" fill="none" stroke="#dc2626" stroke-width="0.3"/><text x="2.2" y="4.5" font-size="0.7" fill="#dc2626">x = (y-2)² + 2</text></svg>`;
+        const svgCircleShift = `<svg width="160" height="160" viewBox="-4 -6 8 8"><line x1="-4" y1="0" x2="4" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-6" x2="0" y2="2" stroke="#333" stroke-width="0.1"/><circle cx="1" cy="-1" r="3" fill="none" stroke="#dc2626" stroke-width="0.3"/><text x="-2" y="-4.5" font-size="0.6" fill="#dc2626">(x-1)² + (y+1)² = 16</text></svg>`;
+        const svgParabolaDown = `<svg width="200" height="140" viewBox="-8 -6 8 10"><line x1="-8" y1="0" x2="0" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-6" x2="0" y2="4" stroke="#333" stroke-width="0.1"/><path d="M -7 -5 Q -4 3 -1 -5" fill="none" stroke="#1e3a8a" stroke-width="0.3"/><text x="-7.5" y="3.5" font-size="0.8" fill="#1e3a8a">y = -(x+4)² + 3</text></svg>`;
+        const svgRationalAsymptote = `<svg width="200" height="140" viewBox="-8 -5 11 10"><line x1="-8" y1="0" x2="3" y2="0" stroke="#333" stroke-width="0.1"/><line x1="0" y1="-5" x2="0" y2="5" stroke="#333" stroke-width="0.1"/><line x1="-3" y1="-5" x2="-3" y2="5" stroke="#3b82f6" stroke-dasharray="0.3" stroke-width="0.2"/><path d="M -2.6 5 Q -2 1 3 0.2" fill="none" stroke="#dc2626" stroke-width="0.3"/><path d="M -3.4 -5 Q -4 -1 -8 -0.2" fill="none" stroke="#dc2626" stroke-width="0.3"/><text x="-7" y="-2" font-size="0.8" fill="#dc2626">y = 1/(x+3)</text></svg>`;
+
+        // 40 Questions sequentially numbered Q1 to Q40 with randomized correct indices (0, 1, 2, 3)
+        const questionsData = [
+            // Q1 (correct: 2 -> Option C)
+            {
+                id: 1,
+                question: "1. What is the fundamental mathematical distinction between a relation and a function?",
+                diagram: null,
+                options: [
+                    "A function must always be a linear equation, whereas a relation is quadratic.",
+                    "All relations are functions, but not all functions are relations.",
+                    "A relation is any pattern between two variables, while a function requires that each x-value corresponds to exactly one y-value.",
+                    "A relation has no domain, but a function has both domain and range."
+                ],
+                correct: 2,
+                rationale: "<b>Definition:</b> A relation is any rule connecting inputs (x) and outputs (y). A function is a special relation where every independent variable x yields exactly ONE dependent variable y."
+            },
+            // Q2 (correct: 1 -> Option B)
+            {
+                id: 2,
+                question: "2. Complete the investigation table for y = x<sup>2</sup>: What are the corresponding y-values for x = -3, -2, -1, 0, 1, 2, 3?",
+                diagram: null,
+                options: [
+                    "-9, -4, -1, 0, 1, 4, 9",
+                    "9, 4, 1, 0, 1, 4, 9",
+                    "3, 2, 1, 0, 1, 2, 3",
+                    "6, 4, 2, 0, 2, 4, 6"
+                ],
+                correct: 1,
+                rationale: "Squaring each x-value yields:<br>(-3)<sup>2</sup> = 9<br>(-2)<sup>2</sup> = 4<br>(-1)<sup>2</sup> = 1<br>0<sup>2</sup> = 0<br>1<sup>2</sup> = 1<br>2<sup>2</sup> = 4<br>3<sup>2</sup> = 9."
+            },
+            // Q3 (correct: 3 -> Option D)
+            {
+                id: 3,
+                question: "3. Complete the investigation table for x = y<sup>2</sup>: If y = -3, -2, -1, 0, 1, 2, 3, what are the corresponding x-values?",
+                diagram: null,
+                options: [
+                    "-3, -2, -1, 0, 1, 2, 3",
+                    "9, 4, 1, 0, -1, -4, -9",
+                    "0, 1, 2, 3, 4, 5, 6",
+                    "9, 4, 1, 0, 1, 4, 9"
+                ],
+                correct: 3,
+                rationale: "Calculating x = y<sup>2</sup>:<br>For y = -3, x = (-3)<sup>2</sup> = 9<br>For y = -2, x = (-2)<sup>2</sup> = 4<br>For y = -1, x = 1<br>For y = 0, x = 0<br>For y = 1, x = 1<br>For y = 2, x = 4<br>For y = 3, x = 9."
+            },
+            // Q4 (correct: 0 -> Option A)
+            {
+                id: 4,
+                question: "4. Based on drawing vertical lines at x = -2, -1, 0, 1, and 2, compare y = x<sup>2</sup> and x = y<sup>2</sup>. Which relation is a function and why?",
+                diagram: null,
+                options: [
+                    "y = x<sup>2</sup> is a function because every vertical line intersects the curve at most once.",
+                    "x = y<sup>2</sup> is a function because every vertical line intersects the curve at most once.",
+                    "Both relations are functions.",
+                    "Neither relation is a function."
+                ],
+                correct: 0,
+                rationale: "<b>Vertical Line Test:</b><br>- For y = x<sup>2</sup>, vertical lines intersect the curve at exactly one point.<br>- For x = y<sup>2</sup>, vertical lines at x = 1 and x = 2 intersect the curve at TWO points (e.g., (4,2) and (4,-2)).<br>Therefore, y = x<sup>2</sup> is a function, whereas x = y<sup>2</sup> is NOT."
+            },
+            // Q5 (correct: 1 -> Option B)
+            {
+                id: 5,
+                question: "5. Use the vertical line test to determine whether y = -4x + 5 is a function.",
+                diagram: svgLineNeg,
+                options: [
+                    "It IS NOT a function because it has a negative slope.",
+                    "It IS a function because no vertical line intersects the line at more than one point.",
+                    "It IS NOT a function because it is a linear equation."
+                ],
+                correct: 1,
+                rationale: "y = -4x + 5 is a non-vertical straight line. Any vertical line intersects it at exactly one point, so it passes the vertical line test."
+            },
+            // Q6 (correct: 2 -> Option C)
+            {
+                id: 6,
+                question: "6. Use the vertical line test to determine whether x = (y - 2)<sup>2</sup> + 2 is a function.",
+                diagram: svgParabolaHoriz,
+                options: [
+                    "It IS a function because it is a parabola.",
+                    "It IS a function because the vertex is at (2,2).",
+                    "It IS NOT a function because a vertical line (e.g. x = 6) intersects the graph in two places."
+                ],
+                correct: 2,
+                rationale: "x = (y - 2)<sup>2</sup> + 2 is a horizontal parabola opening right with vertex at (2,2). A vertical line at x = 6 intersects at y = 0 and y = 4, failing the vertical line test."
+            },
+            // Q7 (correct: 0 -> Option A)
+            {
+                id: 7,
+                question: "7. Use the vertical line test to determine whether (x - 1)<sup>2</sup> + (y + 1)<sup>2</sup> = 16 is a function.",
+                diagram: svgCircleShift,
+                options: [
+                    "It IS NOT a function because it is a circle and vertical lines intersect it at two points.",
+                    "It IS a function because it is centered at (1, -1).",
+                    "It IS a function because the radius is 4."
+                ],
+                correct: 0,
+                rationale: "(x - 1)<sup>2</sup> + (y + 1)<sup>2</sup> = 16 is a circle centered at (1, -1) with radius 4. Vertical lines cross top and bottom arcs, failing the vertical line test."
+            },
+            // Q8 (correct: 1 -> Option B)
+            {
+                id: 8,
+                question: "8. Use the vertical line test to determine whether y = -(x + 4)<sup>2</sup> + 3 is a function.",
+                diagram: svgParabolaDown,
+                options: [
+                    "It IS NOT a function because it opens downwards.",
+                    "It IS a function because every vertical line intersects the downward parabola at most once."
+                ],
+                correct: 1,
+                rationale: "y = -(x + 4)<sup>2</sup> + 3 is a vertical parabola opening downwards with vertex (-4, 3). Every vertical line intersects the curve exactly once."
+            },
+            // Q9 (correct: 2 -> Option C)
+            {
+                id: 9,
+                question: "9. Determine the domain, range, and function status for {(-3, 4), (5, -6), (-2, 7), (5, 3), (6, -8)}.",
+                diagram: null,
+                options: [
+                    "Domain: {x = -3, -2, 5, 6}, Range: {y = -8, -6, 3, 4, 7}; IS a function",
+                    "Domain: {x = -8, -6, 3, 4, 7}, Range: {y = -3, -2, 5, 6}; NOT a function",
+                    "Domain: {x = -3, -2, 5, 6}, Range: {y = -8, -6, 3, 4, 7}; NOT a function"
+                ],
+                correct: 2,
+                rationale: "<b>Domain:</b> {-3, -2, 5, 6}<br><b>Range:</b> {-8, -6, 3, 4, 7}<br><b>Function Status:</b> Input x = 5 maps to two y-values (-6 and 3), so it is NOT a function."
+            },
+            // Q10 (correct: 1 -> Option B)
+            {
+                id: 10,
+                question: "10. Determine the domain, range, and function status for the table relating Age {4, 5, 6, 7, 8, 9, 10} to Number {8, 12, 5, 22, 14, 9, 11}.",
+                diagram: null,
+                options: [
+                    "Domain: {x = 5, 8, 9, 11, 12, 14, 22}, Range: {y = 4, 5, 6, 7, 8, 9, 10}; NOT a function",
+                    "Domain: {x = 4, 5, 6, 7, 8, 9, 10}, Range: {y = 5, 8, 9, 11, 12, 14, 22}; IS a function",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; IS a function"
+                ],
+                correct: 1,
+                rationale: "<b>Domain:</b> {4, 5, 6, 7, 8, 9, 10}<br><b>Range:</b> {5, 8, 9, 11, 12, 14, 22}<br><b>Function Status:</b> Every age maps to exactly one number, so it IS a function."
+            },
+            // Q11 (correct: 0 -> Option A)
+            {
+                id: 11,
+                question: "11. Determine the domain and range of y = 2x - 5.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}",
+                    "Domain: {x ∈ ℝ | x ≥ -5}, Range: {y ∈ ℝ | y ≥ 0}",
+                    "Domain: {x ∈ ℝ | x ≠ 5}, Range: {y ∈ ℝ | y ≠ 0}"
+                ],
+                correct: 0,
+                rationale: "y = 2x - 5 is a straight linear function extending infinitely in both x and y directions.<br>Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}."
+            },
+            // Q12 (correct: 2 -> Option C)
+            {
+                id: 12,
+                question: "12. Determine the domain and range of y = (x - 1)<sup>2</sup> + 3.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≥ 1}, Range: {y ∈ ℝ | y ≥ 3}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≤ 3}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ 3}"
+                ],
+                correct: 2,
+                rationale: "y = (x - 1)<sup>2</sup> + 3 is an upward opening parabola with vertex (1, 3). Minimum y-value is 3.<br>Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ 3}."
+            },
+            // Q13 (correct: 1 -> Option B)
+            {
+                id: 13,
+                question: "13. Determine the domain and range of y = √(x - 1) + 3.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ 3}",
+                    "Domain: {x ∈ ℝ | x ≥ 1}, Range: {y ∈ ℝ | y ≥ 3}",
+                    "Domain: {x ∈ ℝ | x ≥ 0}, Range: {y ∈ ℝ | y ≥ 0}"
+                ],
+                correct: 1,
+                rationale: "Radicand x - 1 ≥ 0 ⇒ x ≥ 1. Minimum value of square root is 0, so y ≥ 0 + 3 = 3.<br>Domain: {x ∈ ℝ | x ≥ 1}, Range: {y ∈ ℝ | y ≥ 3}."
+            },
+            // Q14 (correct: 3 -> Option D)
+            {
+                id: 14,
+                question: "14. Determine the domain and range of x<sup>2</sup> + y<sup>2</sup> = 36.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}",
+                    "Domain: {x ∈ ℝ | 0 ≤ x ≤ 6}, Range: {y ∈ ℝ | 0 ≤ y ≤ 6}",
+                    "Domain: {x ∈ ℝ | x ≥ -6}, Range: {y ∈ ℝ | y ≥ -6}",
+                    "Domain: {x ∈ ℝ | -6 ≤ x ≤ 6}, Range: {y ∈ ℝ | -6 ≤ y ≤ 6}"
+                ],
+                correct: 3,
+                rationale: "Circle centered at origin with radius r = √36 = 6.<br>Domain: {x ∈ ℝ | -6 ≤ x ≤ 6}, Range: {y ∈ ℝ | -6 ≤ y ≤ 6}."
+            },
+            // Q15 (correct: 0 -> Option A)
+            {
+                id: 15,
+                question: "15. Determine the domain, range, and asymptotes of y = <span class='math-frac'><span class='math-num'>1</span><span class='math-den'>x + 3</span></span>.",
+                diagram: svgRationalAsymptote,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≠ -3}, Range: {y ∈ ℝ | y ≠ 0}; Vertical Asymptote x = -3, Horizontal Asymptote y = 0",
+                    "Domain: {x ∈ ℝ | x ≠ 3}, Range: {y ∈ ℝ | y ≠ 0}; Vertical Asymptote x = 3, Horizontal Asymptote y = 0",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; No Asymptotes"
+                ],
+                correct: 0,
+                rationale: "<b>Vertical Asymptote:</b> Denominator x + 3 = 0 ⇒ x = -3.<br><b>Horizontal Asymptote:</b> Division result cannot be 0, so y = 0.<br>Domain: {x ∈ ℝ | x ≠ -3}, Range: {y ∈ ℝ | y ≠ 0}."
+            },
+            // Q16 (correct: 1 -> Option B)
+            {
+                id: 16,
+                question: "16. Which of the graphs below represent functions? (Select the correct combination)",
+                diagram: `<div style="display:flex; justify-style:space-around; flex-wrap:wrap; gap:1rem;">
+                    <div><b>a)</b><br>${svgVabs}</div>
+                    <div><b>b)</b><br>${svgLine}</div>
+                    <div><b>c)</b><br>${svgParabolaUp}</div>
+                    <div><b>d)</b><br>${svgParabolaRight}</div>
+                </div>`,
+                options: [
+                    "a and b only are functions",
+                    "a, b, and c are functions; d is not a function",
+                    "c and d only are functions",
+                    "All graphs (a, b, c, d) are functions"
+                ],
+                correct: 1,
+                rationale: "Graphs a, b, and c pass the vertical line test. Graph d (sideways parabola) fails the vertical line test because vertical lines intersect it twice."
+            },
+            // Q17 (correct: 0 -> Option A)
+            {
+                id: 17,
+                question: "17. Is the relation y = x - 5 a function?",
+                diagram: null,
+                options: ["Yes, it is a linear function", "No, it is not a function"],
+                correct: 0,
+                rationale: "y = x - 5 is a linear function with slope 1 and y-intercept -5. Every input x yields exactly one output y."
+            },
+            // Q18 (correct: 1 -> Option B)
+            {
+                id: 18,
+                question: "18. Is the relation y = 2(x - 1)<sup>2</sup> - 2 a function?",
+                diagram: null,
+                options: ["No, it is not a function", "Yes, it is a quadratic function"],
+                correct: 1,
+                rationale: "y = 2(x - 1)<sup>2</sup> - 2 is a parabola opening upwards. It passes the vertical line test."
+            },
+            // Q19 (correct: 0 -> Option A)
+            {
+                id: 19,
+                question: "19. Is the relation x<sup>2</sup> + y<sup>2</sup> = 4 a function?",
+                diagram: svgCircle,
+                options: ["No, it is a circle and fails the vertical line test", "Yes, it is a function"],
+                correct: 0,
+                rationale: "x<sup>2</sup> + y<sup>2</sup> = 4 is a circle of radius 2. Vertical lines cross top and bottom arcs, failing the vertical line test."
+            },
+            // Q20 (correct: 2 -> Option C)
+            {
+                id: 20,
+                question: "20. State the domain and range of {(-5, 4), (-4, -1), (-2, 1), (0, 4), (1, 3)}. Is it a function?",
+                diagram: null,
+                options: [
+                    "Domain: {x = -1, 1, 3, 4}, Range: {y = -5, -4, -2, 0, 1}; It IS NOT a function",
+                    "Domain: {x = -5, -4, -2, 0, 1}, Range: {y = -1, 1, 3, 4}; It IS NOT a function",
+                    "Domain: {x = -5, -4, -2, 0, 1}, Range: {y = -1, 1, 3, 4}; It IS a function"
+                ],
+                correct: 2,
+                rationale: "Domain = {-5, -4, -2, 0, 1}, Range = {-1, 1, 3, 4}. All x-coordinates are distinct, so it IS a function."
+            },
+            // Q21 (correct: 1 -> Option B)
+            {
+                id: 21,
+                question: "21. State the domain and range of {(-3, -4), (-1, 2), (0, 0), (-3, 5), (2, 4)}. Is it a function?",
+                diagram: null,
+                options: [
+                    "Domain: {x = -3, -1, 0, 2}, Range: {y = -4, 0, 2, 4, 5}; It IS a function",
+                    "Domain: {x = -3, -1, 0, 2}, Range: {y = -4, 0, 2, 4, 5}; It IS NOT a function",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; It IS a function"
+                ],
+                correct: 1,
+                rationale: "Domain = {-3, -1, 0, 2}, Range = {-4, 0, 2, 4, 5}. Input x = -3 maps to two outputs (-4 and 5), so it IS NOT a function."
+            },
+            // Q22 (correct: 0 -> Option A)
+            {
+                id: 22,
+                question: "22. Determine the domain, range, and function status for y = x + 4.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; Function: YES",
+                    "Domain: {x ∈ ℝ | x ≥ -4}, Range: {y ∈ ℝ | y ≥ 0}; Function: YES",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; Function: NO"
+                ],
+                correct: 0,
+                rationale: "Linear function y = x + 4 extends infinitely. Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}. Function: YES."
+            },
+            // Q23 (correct: 2 -> Option C)
+            {
+                id: 23,
+                question: "23. Determine the domain, range, and function status for y = |x|.",
+                diagram: svgVabs,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≥ 0}, Range: {y ∈ ℝ}; Function: YES",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; Function: NO",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ 0}; Function: YES"
+                ],
+                correct: 2,
+                rationale: "Absolute value y = |x| takes any real x, but outputs y ≥ 0. Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ 0}. Function: YES."
+            },
+            // Q24 (correct: 1 -> Option B)
+            {
+                id: 24,
+                question: "24. Determine the domain, range, and function status for x = |y|.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ 0}; Function: YES",
+                    "Domain: {x ∈ ℝ | x ≥ 0}, Range: {y ∈ ℝ}; Function: NO",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; Function: NO"
+                ],
+                correct: 1,
+                rationale: "Sideways absolute value graph x = |y| requires x ≥ 0, while y ∈ ℝ. Vertical lines intersect twice, so Function: NO."
+            },
+            // Q25 (correct: 0 -> Option A)
+            {
+                id: 25,
+                question: "25. Determine the domain, range, and function status for y = -2(x + 4)<sup>2</sup> - 1.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≤ -1}; Function: YES",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ -1}; Function: YES",
+                    "Domain: {x ∈ ℝ | x ≤ -4}, Range: {y ∈ ℝ}; Function: NO"
+                ],
+                correct: 0,
+                rationale: "Downward opening parabola with vertex at (-4, -1). Maximum y-value is -1. Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≤ -1}. Function: YES."
+            },
+            // Q26 (correct: 3 -> Option D)
+            {
+                id: 26,
+                question: "26. Determine the domain, range, and function status for y = <span class='math-frac'><span class='math-num'>2</span><span class='math-den'>x - 3</span></span>.",
+                diagram: svgHyperbola,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; Function: YES",
+                    "Domain: {x ∈ ℝ | x ≠ -3}, Range: {y ∈ ℝ | y ≠ 0}; Function: NO",
+                    "Domain: {x ∈ ℝ | x > 3}, Range: {y ∈ ℝ | y > 0}; Function: YES",
+                    "Domain: {x ∈ ℝ | x ≠ 3}, Range: {y ∈ ℝ | y ≠ 0}; Function: YES"
+                ],
+                correct: 3,
+                rationale: "Rational function with vertical asymptote at x = 3 and horizontal asymptote at y = 0. Domain: {x ∈ ℝ | x ≠ 3}, Range: {y ∈ ℝ | y ≠ 0}. Function: YES."
+            },
+            // Q27 (correct: 1 -> Option B)
+            {
+                id: 27,
+                question: "27. Determine the domain and range for the sinusoidal wave graph.",
+                diagram: svgSine,
+                options: [
+                    "Domain: {x ∈ ℝ | -1 ≤ x ≤ 1}, Range: {y ∈ ℝ}; Function: YES",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | -1 ≤ y ≤ 1}; Function: YES",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; Function: NO"
+                ],
+                correct: 1,
+                rationale: "Sine wave extending infinitely along x, bounded vertically between -1 and 1. Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | -1 ≤ y ≤ 1}. Function: YES."
+            },
+            // Q28 (correct: 0 -> Option A)
+            {
+                id: 28,
+                question: "28. Determine the domain, range, and function status for an ellipse graph bounded between x = -2 to 2 and y = -3 to 3.",
+                diagram: svgEllipse,
+                options: [
+                    "Domain: {x ∈ ℝ | -2 ≤ x ≤ 2}, Range: {y ∈ ℝ | -3 ≤ y ≤ 3}; Function: NO",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}; Function: YES",
+                    "Domain: {x ∈ ℝ | -3 ≤ x ≤ 3}, Range: {y ∈ ℝ | -2 ≤ y ≤ 2}; Function: NO"
+                ],
+                correct: 0,
+                rationale: "An ellipse fails the vertical line test. Domain: {x ∈ ℝ | -2 ≤ x ≤ 2}, Range: {y ∈ ℝ | -3 ≤ y ≤ 3}. Function: NO."
+            },
+            // Q29 (correct: 2 -> Option C)
+            {
+                id: 29,
+                question: "29. Which of the following relations is a function?<br><b>a)</b> Discrete graph with points (0,4), (-4,3), (-2,1), (0,3), (-3,-1)<br><b>b)</b> Table: {(2, -3), (-1, 0), (5, 5), (3, 2), (2, 1)}<br><b>c)</b> Graph of ellipse<br><b>d)</b> Graph of vertical parabola opening right",
+                diagram: null,
+                options: [
+                    "Relation b is a function",
+                    "Relation a is a function",
+                    "None of these relations are functions (specifically, b is not a function because x=2 repeats)",
+                    "All of these relations are functions"
+                ],
+                correct: 2,
+                rationale: "Checking inputs:<br>- a) Point (0,4) and (0,3) repeat x = 0 ⇒ NOT a function.<br>- b) Input x = 2 maps to y = -3 and y = 1 ⇒ NOT a function.<br>- c) Ellipse fails vertical line test ⇒ NOT a function.<br>- d) Horizontal parabola fails vertical line test ⇒ NOT a function.<br>Therefore, NONE of these listed options are functions."
+            },
+            // Q30 (correct: 1 -> Option B)
+            {
+                id: 30,
+                question: "30. Determine domain and range for y = -x + 3.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≥ 3}, Range: {y ∈ ℝ | y ≤ 3}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}",
+                    "Domain: {x ∈ ℝ | x ≠ 3}, Range: {y ∈ ℝ | y ≠ 0}"
+                ],
+                correct: 1,
+                rationale: "Linear function extends infinitely. Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}."
+            },
+            // Q31 (correct: 0 -> Option A)
+            {
+                id: 31,
+                question: "31. Determine domain and range for y = (x + 1)<sup>2</sup> - 4.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ -4}",
+                    "Domain: {x ∈ ℝ | x ≥ -1}, Range: {y ∈ ℝ | y ≥ -4}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}"
+                ],
+                correct: 0,
+                rationale: "Upward opening parabola with vertex at (-1, -4). Minimum y-value is -4. Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ -4}."
+            },
+            // Q32 (correct: 2 -> Option C)
+            {
+                id: 32,
+                question: "32. Determine domain and range for y = -3x<sup>2</sup> + 1.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≥ 1}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≤ 1}"
+                ],
+                correct: 2,
+                rationale: "Downward opening parabola with maximum vertex at (0, 1). Maximum y-value is 1. Domain: {x ∈ ℝ}, Range: {y ∈ ℝ | y ≤ 1}."
+            },
+            // Q33 (correct: 1 -> Option B)
+            {
+                id: 33,
+                question: "33. Determine domain and range for x<sup>2</sup> + y<sup>2</sup> = 9.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}",
+                    "Domain: {x ∈ ℝ | -3 ≤ x ≤ 3}, Range: {y ∈ ℝ | -3 ≤ y ≤ 3}",
+                    "Domain: {x ∈ ℝ | 0 ≤ x ≤ 3}, Range: {y ∈ ℝ | 0 ≤ y ≤ 3}"
+                ],
+                correct: 1,
+                rationale: "Circle centered at origin with radius r = √9 = 3. Domain: {x ∈ ℝ | -3 ≤ x ≤ 3}, Range: {y ∈ ℝ | -3 ≤ y ≤ 3}."
+            },
+            // Q34 (correct: 0 -> Option A)
+            {
+                id: 34,
+                question: "34. Determine domain and range for y = <span class='math-frac'><span class='math-num'>1</span><span class='math-den'>x + 3</span></span>.",
+                diagram: svgRationalAsymptote,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≠ -3}, Range: {y ∈ ℝ | y ≠ 0}",
+                    "Domain: {x ∈ ℝ | x ≠ 3}, Range: {y ∈ ℝ | y ≠ 0}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}"
+                ],
+                correct: 0,
+                rationale: "Rational function with vertical asymptote at x = -3 and horizontal asymptote at y = 0. Domain: {x ∈ ℝ | x ≠ -3}, Range: {y ∈ ℝ | y ≠ 0}."
+            },
+            // Q35 (correct: 3 -> Option D)
+            {
+                id: 35,
+                question: "35. Determine domain and range for y = √(2x + 1).",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≥ 0}, Range: {y ∈ ℝ | y ≥ 0}",
+                    "Domain: {x ∈ ℝ}, Range: {y ∈ ℝ}",
+                    "Domain: {x ∈ ℝ | x ≥ -1}, Range: {y ∈ ℝ | y ≥ 0}",
+                    "Domain: {x ∈ ℝ | x ≥ -0.5}, Range: {y ∈ ℝ | y ≥ 0}"
+                ],
+                correct: 3,
+                rationale: "Square root requires 2x + 1 ≥ 0 ⇒ x ≥ -0.5. Output is non-negative y ≥ 0. Domain: {x ∈ ℝ | x ≥ -0.5}, Range: {y ∈ ℝ | y ≥ 0}."
+            },
+            // Q36 (correct: 1 -> Option B)
+            {
+                id: 36,
+                question: "36. Pam has 90 m of fencing to enclose a rectangular petting zoo area with two interior dividers separating 3 equal pens. Express the total area function A(x) in terms of width x.",
+                diagram: `<div style="text-align:center;"><svg width="240" height="100" viewBox="0 0 240 100"><rect x="10" y="10" width="220" height="80" fill="#fcd34d" opacity="0.3" stroke="#d97706" stroke-width="3"/><line x1="83" y1="10" x2="83" y2="90" stroke="#d97706" stroke-width="3"/><line x1="156" y1="10" x2="156" y2="90" stroke="#d97706" stroke-width="3"/><text x="40" y="55" font-weight="bold">piglets</text><text x="110" y="55" font-weight="bold">lambs</text><text x="180" y="55" font-weight="bold">rabbits</text><text x="235" y="55" font-weight="bold" fill="#dc2626">x</text></svg></div>`,
+                options: [
+                    "A(x) = -4x<sup>2</sup> + 90x",
+                    "A(x) = -2x<sup>2</sup> + 45x",
+                    "A(x) = -x<sup>2</sup> + 45x"
+                ],
+                correct: 1,
+                rationale: "4 vertical divider segments of width x take 4x fencing. Length for 2 horizontal sides = (90 - 4x)/2 = 45 - 2x.<br>Area A(x) = x(45 - 2x) = -2x<sup>2</sup> + 45x."
+            },
+            // Q37 (correct: 0 -> Option A)
+            {
+                id: 37,
+                question: "37. What is the domain of the petting zoo area function A(x) = -2x<sup>2</sup> + 45x?",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ | 0 < x < 22.5}",
+                    "Domain: {x ∈ ℝ | 0 < x < 45}",
+                    "Domain: {x ∈ ℝ | x > 0}"
+                ],
+                correct: 0,
+                rationale: "Width x > 0 and Length (45 - 2x) > 0 ⇒ 2x < 45 ⇒ x < 22.5. Domain: {x ∈ ℝ | 0 < x < 22.5}."
+            },
+            // Q38 (correct: 2 -> Option C)
+            {
+                id: 38,
+                question: "38. What is the range of the petting zoo area function A(x) = -2x<sup>2</sup> + 45x?",
+                diagram: null,
+                options: [
+                    "Range: {A ∈ ℝ | 0 < A ≤ 507.25}",
+                    "Range: {A ∈ ℝ | A > 0}",
+                    "Range: {A ∈ ℝ | 0 < A ≤ 253.125}"
+                ],
+                correct: 2,
+                rationale: "Maximum area vertex occurs at x = 11.25 m.<br>Max Area A(11.25) = -2(11.25)<sup>2</sup> + 45(11.25) = 253.125 m<sup>2</sup>.<br>Range: {A ∈ ℝ | 0 < A ≤ 253.125}."
+            },
+            // Q39 (correct: 1 -> Option B)
+            {
+                id: 39,
+                question: "39. Determine the domain and vertical asymptote for the rational function y = <span class='math-frac'><span class='math-num'>3</span><span class='math-den'>2x - 6</span></span> + 1.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≠ -3}, Vertical Asymptote at x = -3",
+                    "Domain: {x ∈ ℝ | x ≠ 3}, Vertical Asymptote at x = 3",
+                    "Domain: {x ∈ ℝ | x ≠ 6}, Vertical Asymptote at x = 6"
+                ],
+                correct: 1,
+                rationale: "Denominator cannot be zero: 2x - 6 = 0 ⇒ 2x = 6 ⇒ x = 3. Therefore, the vertical asymptote is x = 3 and the domain is {x ∈ ℝ | x ≠ 3}."
+            },
+            // Q40 (correct: 0 -> Option A)
+            {
+                id: 40,
+                question: "40. Determine the domain and range of the transformed square root function y = -√(4 - x) + 2.",
+                diagram: null,
+                options: [
+                    "Domain: {x ∈ ℝ | x ≤ 4}, Range: {y ∈ ℝ | y ≤ 2}",
+                    "Domain: {x ∈ ℝ | x ≥ 4}, Range: {y ∈ ℝ | y ≥ 2}",
+                    "Domain: {x ∈ ℝ | x ≤ 4}, Range: {y ∈ ℝ | y ≥ 2}"
+                ],
+                correct: 0,
+                rationale: "Radicand 4 - x ≥ 0 ⇒ x ≤ 4. Since the square root is multiplied by -1 and shifted up 2, the maximum y-value is 2. Therefore, Range: {y ∈ ℝ | y ≤ 2}."
+            }
+        ];
+
+        let currentUser = null;
+        let currentQIndex = 0;
+        let userState = { answers: {}, status: {}, videoApproved: false };
+        let desmosCalc = null;
+
+        function initDesmos() {
+            const elt = document.getElementById('desmos-calculator');
+            if (elt && !desmosCalc && window.Desmos) {
+                desmosCalc = Desmos.GraphingCalculator(elt, {
+                    expressions: true,
+                    keypad: false,
+                    settingsMenu: false
+                });
+                desmosCalc.setExpression({ id: 'g1', latex: 'y=x^2' });
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value.trim();
+            if (email) {
+                currentUser = email;
+                localStorage.setItem('bm_user_email', email);
+                initSession();
+            }
+        }
+
+        function initSession() {
+            document.getElementById('display-user-email').innerText = currentUser;
+            document.getElementById('user-header-info').style.display = 'flex';
+
+            const savedData = localStorage.getItem(`${currentUser}_${CHAPTER_KEY}`);
+            if (savedData) {
+                userState = JSON.parse(savedData);
+            } else {
+                userState = { answers: {}, status: {}, videoApproved: false };
+            }
+
+            if (!userState.videoApproved) {
+                switchScreen('video-screen');
+            } else {
+                startQuizScreen();
+            }
+        }
+
+        function approveVideoAndStart() {
+            userState.videoApproved = true;
+            saveState();
+            startQuizScreen();
+        }
+
+        function startQuizScreen() {
+            switchScreen('quiz-screen');
+            renderGrid();
+            loadQuestion(0);
+            setTimeout(initDesmos, 300);
+        }
+
+        function logout() {
+            localStorage.removeItem('bm_user_email');
+            currentUser = null;
+            document.getElementById('user-header-info').style.display = 'none';
+            switchScreen('auth-screen');
+        }
+
+        function saveState() {
+            if (currentUser) {
+                localStorage.setItem(`${currentUser}_${CHAPTER_KEY}`, JSON.stringify(userState));
+            }
+        }
+
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'grid-btn';
+                btn.innerText = idx + 1;
+
+                if (idx === currentQIndex) btn.classList.add('active');
+                if (userState.status[idx] === 'submitted') btn.classList.add('attempted');
+                if (userState.status[idx] === 'skipped') btn.classList.add('skipped');
+
+                btn.onclick = () => jumpToQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function loadQuestion(index) {
+            currentQIndex = index;
+            const q = questionsData[index];
+
+            document.getElementById('q-number-badge').innerText = `Question ${index + 1} of ${questionsData.length}`;
+            document.getElementById('q-text-body').innerHTML = q.question;
+
+            const diagramBox = document.getElementById('q-diagram-container');
+            if (q.diagram) {
+                diagramBox.innerHTML = q.diagram;
+                diagramBox.style.display = 'block';
+            } else {
+                diagramBox.style.display = 'none';
+                diagramBox.innerHTML = '';
+            }
+
+            const optsBox = document.getElementById('q-options-container');
+            optsBox.innerHTML = '';
+
+            const isSubmitted = userState.status[index] === 'submitted';
+            const userChoice = userState.answers[index];
+
+            q.options.forEach((optText, optIdx) => {
+                const item = document.createElement('div');
+                item.className = 'option-item';
+
+                if (userChoice === optIdx) item.classList.add('selected');
+                if (isSubmitted) {
+                    item.classList.add('disabled');
+                    if (optIdx === q.correct) item.classList.add('correct');
+                    else if (userChoice === optIdx) item.classList.add('incorrect');
+                } else {
+                    item.onclick = () => selectOption(optIdx);
+                }
+
+                item.innerHTML = `<div class="opt-prefix">${String.fromCharCode(65 + optIdx)}</div><div>${optText}</div>`;
+                optsBox.appendChild(item);
+            });
+
+            const ratBox = document.getElementById('rationale-container');
+            if (isSubmitted) {
+                ratBox.style.display = 'block';
+                document.getElementById('rationale-text').innerHTML = q.rationale;
+                document.getElementById('submit-btn').style.display = 'none';
+                document.getElementById('skip-btn').style.display = 'none';
+                document.getElementById('next-btn').style.display = 'inline-flex';
+            } else {
+                ratBox.style.display = 'none';
+                document.getElementById('submit-btn').style.display = 'inline-flex';
+                document.getElementById('skip-btn').style.display = 'inline-flex';
+                document.getElementById('next-btn').style.display = 'none';
+            }
+
+            renderGrid();
+        }
+
+        function selectOption(idx) {
+            if (userState.status[currentQIndex] === 'submitted') return;
+            userState.answers[currentQIndex] = idx;
+            saveState();
+            loadQuestion(currentQIndex);
+        }
+
+        function submitAnswer() {
+            if (userState.answers[currentQIndex] === undefined) {
+                alert("Please select an option first!");
+                return;
+            }
+            
+            userState.status[currentQIndex] = 'submitted';
+            saveState();
+
+            if (userState.answers[currentQIndex] === questionsData[currentQIndex].correct) {
+                AudioFX.playCorrectBell();
+            } else {
+                AudioFX.playIncorrectBell();
+            }
+
+            loadQuestion(currentQIndex);
+        }
+
+        function skipQuestion() {
+            userState.status[currentQIndex] = 'skipped';
+            saveState();
+            AudioFX.playSkipChime();
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < questionsData.length - 1) {
+                loadQuestion(currentQIndex + 1);
+            } else {
+                finishTest();
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        function finishTest() {
+            switchScreen('review-screen');
+            let score = 0;
+            const reviewList = document.getElementById('review-list');
+            reviewList.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const ans = userState.answers[idx];
+                const status = userState.status[idx];
+                const isCorrect = ans === q.correct;
+
+                if (status === 'submitted' && isCorrect) score++;
+
+                const card = document.createElement('div');
+                card.className = 'review-card';
+
+                let tagHtml = '<span class="status-tag tag-skipped">Skipped</span>';
+                if (status === 'submitted') {
+                    tagHtml = isCorrect 
+                        ? '<span class="status-tag tag-correct">Correct</span>' 
+                        : '<span class="status-tag tag-incorrect">Incorrect</span>';
+                }
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                        <strong>Q${idx + 1}: ${q.question}</strong>
+                        ${tagHtml}
+                    </div>
+                    <p style="font-size:0.9rem; color:var(--text-muted);">
+                        <strong>Your Choice:</strong> ${ans !== undefined ? q.options[ans] : 'None (Skipped)'} | 
+                        <strong>Correct Answer:</strong> ${q.options[q.correct]}
+                    </p>
+                    <div style="margin-top:0.5rem; font-size:0.85rem; background:#f8fafc; padding:0.5rem; border-radius:4px;">
+                        <strong>Solution:</strong> ${q.rationale}
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+
+            document.getElementById('final-score').innerText = `${score} / ${questionsData.length}`;
+        }
+
+        function restartQuiz() {
+            userState = { answers: {}, status: {}, videoApproved: true };
+            saveState();
+            startQuizScreen();
+        }
+
+        window.onload = function() {
+            const savedUser = localStorage.getItem('bm_user_email');
+            if (savedUser) {
+                currentUser = savedUser;
+                initSession();
+            }
+        };
+    </script>
+</body>
+</html>
